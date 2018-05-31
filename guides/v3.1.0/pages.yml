@@ -17,6 +17,26 @@
     - title: "JavaScript Primer"
       url: "js-primer"
 
+- title: "Ember 101: Rolodex"
+  url: '101-tutorial'
+  pages:
+    - title: "Setting Up"
+      url: "setting-up"
+    - title: "The Application Template"
+      url: "application-template"
+    - title: "Creating the Contact List"
+      url: "creating-the-contact-list"
+    - title: "Creating a Details Component"
+      url: "creating-a-details-component"
+    - title: "Refactoring with Routes"
+      url: "refactoring-with-routes"
+    - title: "Adding a Service"
+      url: "adding-a-service"
+    - title: "Testing the App"
+      url: "testing-the-app"
+    - title: "Finishing Up"
+      url: "finishing-up"
+
 - title: "Tutorial"
   url: 'tutorial'
   pages:
