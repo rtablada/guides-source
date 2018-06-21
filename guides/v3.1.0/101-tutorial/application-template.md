@@ -21,21 +21,21 @@ Add the following markup to `application.hbs`:
     <ul>
       <li>
         <a class="active">
-          <h4>Tomster</h4>
-          <p>tomster@emberjs.com</p>
+          <h4>Zoey</h4>
+          <p>zoey@emberjs.com</p>
         </a>
       </li>
       <li>
         <a>
-          <h4>Zoey</h4>
-          <p>zoey@emberjs.com</p>
+          <h4>Tomster</h4>
+          <p>tomster@emberjs.com</p>
         </a>
       </li>
     </ul>
   </nav>
 
   <section>
-    <h1>Tomster</h1>
+    <h1>Zoey</h1>
 
     <ul class="contact-items">
       <li>
@@ -51,7 +51,7 @@ Add the following markup to `application.hbs`:
           email
         </div>
         <div class="contact-item-value">
-          tomster@emberjs.com
+          zoey@emberjs.com
         </div>
       </li>
       <li>
@@ -116,4 +116,4 @@ Dynamic content in Handlebars templates is generally surrounded by either double
 curly braces (e.g. `{{foo}}`), or in the case of components, by angle brackets
 in capital case (e.g. `<ModalDialog></ModalDialog`). So far our template doesn't
 have any dynamic content, it's plain HTML and CSS. In the next step, we'll
-extract our first component, the ContactList.
+extract our first component, the `ContactList`.
