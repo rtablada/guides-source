@@ -280,14 +280,14 @@ filter through contacts.
 
 ## Adding Search Functionality
 
-We can use native `onkeypress` event handler to add an action to the search input
-that will send its value to the component class. We'll use another built in
-helper here, `{{action}}`:
+First, we need to hookup the current `input` to send its value to the component
+whenever its updated. Ember ships with a built in `Input` component, which
+handles the details of this data binding for us:
 
 ```handlebars {data-filename="app/templates/components/contact-list.hbs" data-diff="-2,+3"}
 <nav>
   <input placeholder="search" />
-  <input placeholder="search" onkeypress={{action this.updateSearchValue}} />
+  <Input placeholder="search" @value={{searchValue}} />
   <ul>
     {{#each this.contacts as |contact|}}
       <li>
@@ -301,113 +301,38 @@ helper here, `{{action}}`:
 </nav>
 ```
 
-Next, in the component class we'll add the `updateSearchValue` method. The
-method is called directly from the native element's `onkeypress` hook, so it
-receives the native javascript event as its argument. We can get the original
-target of the event (the input) and the get the value of the input, and set it
-on the component:
+Notice how we passed `placeholder` directly to the `Input` component, just like
+we passed it to the standard `input` element it replaced, but we added a `@` to
+the beginning of `@value`. Ember components can receive two different types of
+values: **attributes** and **arguments**.
 
-```js {data-filename="app/components/contact-list.js" data-diff="+4,+5,+6,+7"}
-import Component from '@ember/component';
+* **Attributes** are standard HTML attributes, and they are rendered directly
+in the component via the `...attributes` syntax. We'll learn more about this
+later, but in general attributes are meant to work just like standard HTML
+attributes such as `id`, `class`, `role`, aria attributes, data attributes, and
+more.
 
-export default class ContactList extends Component {
-  updateSearchValue(event) {
-    this.set('searchValue', event.target.value);
-  }
+* **Arguments** are values that are passed to the component instance. These can
+be any kind of value - strings, numbers, booleans, objects, etc. They are passed
+in and the component can use them directly and bind them in its template.
 
-  contacts = [
-    {
-      name: 'Zoey',
-      email: 'zoey@emberjs.com',
-    },
-    {
-      name: 'Tomster',
-      email: 'tomster@emberjs.com',
-    },
-    {
-      name: 'Bob',
-      email: 'bob@emberjs.com',
-    },
-  ];
-}
-```
-
-Note that we have to use `this.set` to update the state of the component. Using
-`this.set` tells Ember that something has been updated and that it should
-invalidate and cached values that rely on the updated value. If the value is
-bound in the template, directly or indirectly, this will cause Ember rerender.
-For now, nothing depends on our `searchValue` property, so nothing will update.
-
-This is a pretty common pattern, and it would add a lot of boilerplate if we
-were to have to add a method every time we wanted to update a value from an
-input! Luckily, we have a shorthand in the form of another helper - `mut`. `mut`
-is a helper that returns a function that does exactly what we did in the method
-above:
-
-```handlebars {data-filename="app/templates/components/contact-list.hbs" data-diff="-2,+3"}
-<nav>
-  <input placeholder="search" onkeypress={{action this.updateSearchValue}} />
-  <input placeholder="search" onkeypress={{action (mut this.searchValue) value="target.value"}} />
-  <ul>
-    {{#each this.contacts as |contact|}}
-      <li>
-        <a class="active">
-          <h4>{{contact.name}}</h4>
-          <p>{{contact.email}}</p>
-        </a>
-      </li>
-    {{/each}}
-  </ul>
-</nav>
-```
-
-The first thing you'll notice that the `(mut)` helper up there is surrounded by
-parentheses instead of curly brackets. This is another feature of Handlebars -
-helpers can call other helpers, and when they invoke nested helpers they use
-parentheses. Otherwise, the syntax is exactly the same.
-
-The second thing you'll notice is that we pass `this.searchValue` directly into
-mut. This tells `mut` to set the `this.searchValue` to whatever is passed to it
-(_mut_ating the value).
-
-For the last part, we know that the `onkeypress` handler is going to pass the
-function that `mut` returns the `change` event, but that's not what we want!
-However, `{{action}}` has an option that allows us to specify a lookup path to
-pass instead, which is the `value="target.value"` portion we added.
-
-Now we can remove the action method we added before:
-
-```js {data-filename="app/components/contact-list.js" data-diff="-4,-5,-6,-7"}
-import Component from '@ember/component';
-
-export default class ContactList extends Component {
-  updateSearchValue(event) {
-    this.set('searchValue', event.target.value);
-  }
-
-  contacts = [
-    {
-      name: 'Zoey',
-      email: 'zoey@emberjs.com',
-    },
-    {
-      name: 'Tomster',
-      email: 'tomster@emberjs.com',
-    },
-    {
-      name: 'Bob',
-      email: 'bob@emberjs.com',
-    },
-  ];
-}
-```
-
-### The `filteredContacts` computed
+The `Input` component receives a `@value` argument which it binds to the `input`
+tag in its template. This binding is bidirectional - when you update the value
+of the `input` tag, it is communicated upwards by the `Input` component and
+modified in the surrounding context (in this case, the `ContactList` component).
+It's absolutely possible to have a uni-directional binding, where updating a
+value in a child component will _not_ automatically update the parent component,
+but in the common case for HTML inputs users generally want this behavior, so
+`Input` implements it this way to save some boilerplate. We'll discuss
+uni-directional data flow (also known as Data Down, Actions Up) later on.
 
 Now that we have the search value in our component, we need to use it to
 actually filter the list. To do that, we'll use a computed property:
 
-```js {data-filename="app/components/contact-list.js" data-diff="+10,+11,+12"}
+```js {data-filename="app/components/contact-list.js" data-diff="+2,+20,+21,+22,+23,+24,+25,+26,+27,+28,+29,+30,+31"}
+import Component from '@ember/component';
+import { computed } from '@ember-decorators/object';
+
 export default class ContactList extends Component {
   contacts = [
     {
@@ -426,7 +351,15 @@ export default class ContactList extends Component {
 
   @computed('contacts', 'searchValue')
   get filteredContacts() {
-    return this.contacts.filter(contact => contact.name.match(this.searchValue));
+    // Turn the search string into a case-insensitive,
+    // regular expression so we can match without
+    // worrying about case
+    let searchRegex = new RegExp(this.searchValue, 'i');
+
+    return this.contacts.filter(contact => {
+      return searchRegex.test(contact.name)
+        || searchRegex.test(contact.email);
+    });
   }
 }
 ```
@@ -444,7 +377,7 @@ Let's update the template to use our new `filteredContacts` property:
 
 ```handlebars {data-filename="app/templates/components/contact-list.hbs" data-diff="-4,+5"}
 <nav>
-  <input placeholder="search" onkeypress={{action (mut this.searchValue) value="target.value"}} />
+  <Input placeholder="search" @value={{searchValue}} />
   <ul>
     {{#each this.contacts as |contact|}}
     {{#each this.filteredContacts as |contact|}}
@@ -458,3 +391,9 @@ Let's update the template to use our new `filteredContacts` property:
   </ul>
 </nav>
 ```
+
+Now, whenever we type a value into the search bar it should update the list to
+only show the contacts that match the value!
+
+That's about it for our contact list component. Next, we'll create a details
+section that displays when a user selects a contact from the list.
