@@ -129,7 +129,7 @@ Save your changes, and you should see the application rebuild and reload.
 Everything should appear the exact same as before, and if you inspect the DOM
 you'll find that our HTML has remained unchanged:
 
-This is because Ember is rendering the `ContactManager` component in the
+This is because Ember is rendering the `ContactList` component in the
 application template, which puts _its_ template wherever we invoked it. Because
 the `ContactList` component only has a template right now, we don't see anything
 dynamic. It's just the HTML being inserted directly.
@@ -182,7 +182,7 @@ item in the template, like so:
     </li>
     {{#each this.contacts as |contact|}}
       <li>
-        <a class="active">
+        <a>
           <h4>{{contact.name}}</h4>
           <p>{{contact.email}}</p>
         </a>
@@ -192,9 +192,11 @@ item in the template, like so:
 </nav>
 ```
 
-You should see the exact same output as before in your browser, only this time
-it's dynamic and based on data in your component. Let's add another contact to
-the list to see it update:
+You should see the same output as before in your browser, only this time it's
+dynamic and based on data in your component. There will be one minor difference
+here, which is that the first contact will no longer have the `active` class
+applied to it. We'll come back to this later once we get the details component
+setup. In the meantime, let's add another contact to the list to see it update:
 
 ```js {data-filename="app/components/contact-list.js" data-diff="+13,+14,+15,+16"}
 import Component from '@ember/component';
@@ -291,7 +293,7 @@ handles the details of this data binding for us:
   <ul>
     {{#each this.contacts as |contact|}}
       <li>
-        <a class="active">
+        <a>
           <h4>{{contact.name}}</h4>
           <p>{{contact.email}}</p>
         </a>
@@ -317,13 +319,13 @@ be any kind of value - strings, numbers, booleans, objects, etc. They are passed
 in and the component can use them directly and bind them in its template.
 
 The `Input` component receives a `@value` argument which it binds to the `input`
-tag in its template. This binding is bidirectional - when you update the value
+tag in its template. This binding is bi-directional - when you update the value
 of the `input` tag, it is communicated upwards by the `Input` component and
 modified in the surrounding context (in this case, the `ContactList` component).
 It's absolutely possible to have a uni-directional binding, where updating a
 value in a child component will _not_ automatically update the parent component,
-but in the common case for HTML inputs users generally want this behavior, so
-`Input` implements it this way to save some boilerplate. We'll discuss
+but most often for HTML inputs bi-directional binding is the behavior we want,
+so `Input` implements it this way to save some boilerplate. We'll discuss
 uni-directional data flow (also known as Data Down, Actions Up) later on.
 
 Now that we have the search value in our component, we need to use it to
