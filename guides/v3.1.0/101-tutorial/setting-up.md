@@ -172,7 +172,7 @@ Let's look at where this UI is coming from.
 
 Let's look at the contents of `app/templates/application.hbs`, here there is a some Handlebars code that should look like this;
 
-```app/templates/application.hbs
+```handlebars {data-filename="app/templates/application.hbs"}
 {{!-- The following component displays Ember's default welcome message. --}}
 {{welcome-page}}
 {{!-- Feel free to remove this! --}}
