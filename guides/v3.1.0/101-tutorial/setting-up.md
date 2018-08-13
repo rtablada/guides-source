@@ -49,14 +49,14 @@ Firefox, Microsoft Edge, or Safari should work just fine.
 
 ## Bootstrapping a New App
 
-If you haven't already, install Ember-CLI install the latest version globally:
+If you haven't already, install the latest version of Ember-CLI globally:
 
 ```sh
 npm install -g ember-cli@latest
 ```
 
-Ember-CLI is the Ember Command Line Tool. It provides a ton of helpful features,
-like generators and blueprints for new applications. It also wraps the Ember
+Ember-CLI is the Ember Command Line Interface. It's a tool that provides a ton of helpful 
+features, like generators and blueprints for new applications. It also wraps the Ember
 build system and development server which builds and packages your app for distribution.
 While it is possible to set everything up on your own by including scripts or using other
 build tools, its not recommended.
@@ -135,7 +135,7 @@ used to build serve and create your Ember application.
 This includes Ember, Ember CLI, addons and more!
 
 
-**package.json**: The `package.json` file is what defines the dependencies that `npm` installs in `node_modules.
+**package.json**: The `package.json` file is what defines the dependencies that `npm` installs in `node_modules`.
 Packages here are usually defined in `dev-dependencies` since they are used locally to create your final Ember application
 
 **public**: This directory contains assets such as images and fonts.
