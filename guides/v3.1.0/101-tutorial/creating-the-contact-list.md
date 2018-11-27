@@ -136,7 +136,7 @@ dynamic. It's just the HTML being inserted directly.
 
 Let's change that!
 
-First, lets add some data to our component. We'll add a couple of javascript
+First, lets add some data to our component. We'll add a couple of JavaScript
 objects that represent the contacts in the list, Zoey and Tomster. Open up the
 component file at `app/components/contact-list.js` and add a contacts array
 to the class:
@@ -277,7 +277,7 @@ this template refer to `contact`, which is a local variable yielded by
 (e.g. `{{this.foo}}`)
 
 Alright, now we're dynamically rendering some HTML based on values in our
-Javascript! Next, let's add some functionality to that search bar so we can
+JavaScript! Next, let's add some functionality to that search bar so we can
 filter through contacts.
 
 ## Adding Search Functionality

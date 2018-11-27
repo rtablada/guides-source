@@ -613,7 +613,7 @@ contact. `set` is a special function that notifies Ember when something is
 changing, letting it know that it may need to rerender. It also invalidates
 computed properties so they know to recalculate. Ember will generally let you
 know if you should be using `set` to set a field via a special dev-only
-assertion, so you won't accidentally assign a value using standard Javascript
+assertion, so you won't accidentally assign a value using standard JavaScript
 assignment (e.g. `this.selectedContact = contact`).
 
 Now in our template, we can update the `ContactList` component to take this new
